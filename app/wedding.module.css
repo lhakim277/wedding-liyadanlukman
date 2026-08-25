@@ -583,91 +583,231 @@
   color: var(--ink);
 }
 
-/* ---------- WISHES ---------- */
-.wishes {
-  background: var(--ink);
+/* ---------- DOA & UCAPAN (MATCHING SCREENSHOT) ---------- */
+.wishesSection {
+  background: #cbb39a;
+  padding: 60px 20px 70px;
+  position: relative;
 }
 
-.wishCount {
-  font-size: 0.9rem;
-  color: var(--sand);
-  margin-bottom: 20px;
+.wishesHeaderWrapper {
+  position: relative;
+  text-align: center;
+  margin-bottom: 24px;
+  user-select: none;
 }
 
-.wishForm {
+.wishesTitleMain {
+  font-family: var(--font-playfair), serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  position: relative;
+  z-index: 2;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.wishesTitleReflection {
+  font-family: var(--font-playfair), serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-8px) scaleY(-1);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent 70%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent 70%);
+  position: relative;
+  z-index: 1;
+  line-height: 1.1;
+}
+
+.wishesCard {
+  background: #faf7f2;
+  border-radius: 14px;
+  padding: 22px 20px 26px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  max-width: 440px;
+  margin: 0 auto;
+  color: #4a3e2c;
+  text-align: left;
+}
+
+.wishesCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #5a4a34;
+  margin-bottom: 16px;
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+.wishesCardHeader svg {
+  width: 20px;
+  height: 20px;
+  color: #5a4a34;
+}
+
+.wishesForm {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 380px;
-  margin: 0 auto 28px;
 }
 
-.wishInput,
-.wishTextarea {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--line);
-  color: var(--cream);
-  font-family: var(--font-montserrat), sans-serif;
-  font-size: 0.9rem;
-  padding: 12px 14px;
+.wishesInput,
+.wishesTextarea,
+.wishesSelect {
+  background: #ffffff;
+  border: 1px solid #e0d7cb;
   border-radius: 4px;
+  color: #333333;
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 0.92rem;
+  padding: 10px 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
 }
 
-.wishInput:focus,
-.wishTextarea:focus {
-  border-color: var(--sand);
+.wishesInput::placeholder,
+.wishesTextarea::placeholder {
+  color: #9c9284;
 }
 
-.wishTextarea {
-  min-height: 90px;
+.wishesSelect {
+  color: #4a3e2c;
+}
+
+.wishesInput:focus,
+.wishesTextarea:focus,
+.wishesSelect:focus {
+  border-color: #6a573d;
+  box-shadow: 0 0 0 2px rgba(106, 87, 61, 0.12);
+}
+
+.wishesTextarea {
+  min-height: 85px;
   resize: vertical;
 }
 
-.wishHint {
-  font-size: 11px;
-  color: var(--muted);
-  text-align: left;
-  line-height: 1.5;
-  opacity: 0.8;
+.wishesSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239c9284' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  cursor: pointer;
 }
 
-.wishList {
+.wishesSubmitBtn {
+  background: #6a573d;
+  color: #ffffff;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  border-radius: 4px;
+  padding: 9px 24px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.2s, transform 0.15s;
+  margin-top: 2px;
+}
+
+.wishesSubmitBtn:hover {
+  background: #574630;
+  transform: translateY(-1px);
+}
+
+.wishesDivider {
+  height: 1px;
+  background: #ede5d8;
+  margin: 20px 0 16px;
+}
+
+.wishesList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 380px;
-  margin: 0 auto;
-  max-height: 340px;
+  gap: 16px;
+  max-height: 380px;
   overflow-y: auto;
-  text-align: left;
+  padding-right: 4px;
 }
 
-.wishItem {
-  border: 1px solid var(--line);
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.02);
+.wishesList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.wishesList::-webkit-scrollbar-thumb {
+  background: #d8cebf;
   border-radius: 4px;
 }
 
-.wishAuthor {
-  font-family: var(--font-playfair), serif;
-  font-size: 1.05rem;
-  color: var(--sand);
+.wishesItem {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #ede5d8;
+}
+
+.wishesItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.wishesItemHeader {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 4px;
 }
 
-.wishMessage {
-  font-size: 0.86rem;
-  color: var(--cream);
-  line-height: 1.6;
+.wishesAuthorName {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #4a3e2c;
 }
 
-.wishTime {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 6px;
+.wishesBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #6a573d;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
+.wishesBadge svg {
+  width: 12px;
+  height: 12px;
+}
+
+.wishesItemTime {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #8c8273;
+  margin-bottom: 6px;
+}
+
+.wishesItemTime svg {
+  width: 13px;
+  height: 13px;
+  color: #8c8273;
+}
+
+.wishesItemMessage {
+  font-size: 0.9rem;
+  color: #4a443a;
+  line-height: 1.55;
+  word-break: break-word;
 }
 
 /* ---------- RSVP ---------- */

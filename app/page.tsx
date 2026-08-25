@@ -22,7 +22,12 @@ const GIFT_ADDRESS =
   "Jl. M. Siban Bojong Poncol No.172, RT.002/RW.008, Kunciran Indah, Kec. Pinang, Kota Tangerang, Banten 15144";
 const WISHES_KEY = "liya-lukman-wishes";
 
-type Wish = { name: string; message: string; at: number };
+type Wish = {
+  name: string;
+  attendance?: "yes" | "no";
+  message: string;
+  at: number;
+};
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -37,6 +42,31 @@ function toProperCase(str: string) {
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .join(" ");
+}
+
+function formatRelativeTime(timestamp: number) {
+  const diff = Date.now() - timestamp;
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    const remHours = hours % 24;
+    return remHours > 0
+      ? `${days} hari, ${remHours} jam yang lalu`
+      : `${days} hari yang lalu`;
+  }
+  if (hours > 0) {
+    const remMins = minutes % 60;
+    return remMins > 0
+      ? `${hours} jam, ${remMins} menit yang lalu`
+      : `${hours} jam yang lalu`;
+  }
+  if (minutes > 0) {
+    return `${minutes} menit yang lalu`;
+  }
+  return "Baru saja";
 }
 
 function useGuestName() {
@@ -54,7 +84,7 @@ function WeddingInvitation() {
   const guestName = useGuestName();
   const [opened, setOpened] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [rsvpStatus, setRsvpStatus] = useState<"yes" | "no" | null>(null);
+  const [attendance, setAttendance] = useState<"yes" | "no">("yes");
   const [cd, setCd] = useState({ d: "00", h: "00", m: "00", s: "00" });
   const [wishName, setWishName] = useState("");
   const [wishMessage, setWishMessage] = useState("");
@@ -87,13 +117,16 @@ function WeddingInvitation() {
 
   useEffect(() => {
     const tick = () => {
-      let diff = WEDDING_TARGET - Date.now();
-      if (diff < 0) diff = 0;
+      const diff = Math.max(0, WEDDING_TARGET - Date.now());
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
       setCd({
-        d: pad(Math.floor(diff / (1000 * 60 * 60 * 24))),
-        h: pad(Math.floor((diff / (1000 * 60 * 60)) % 24)),
-        m: pad(Math.floor((diff / (1000 * 60)) % 60)),
-        s: pad(Math.floor((diff / 1000) % 60)),
+        d: pad(days),
+        h: pad(hours),
+        m: pad(minutes),
+        s: pad(seconds),
       });
     };
     tick();
@@ -104,15 +137,15 @@ function WeddingInvitation() {
   const calendarHref = useMemo(() => {
     const text = encodeURIComponent("The Wedding of Liya & Lukman");
     const details = encodeURIComponent(
-      "Pernikahan Miinatul Mauliyati Zahroh & Lukman Hakim di Rumah Makan Dapur Kawalli"
+      "Resepsi Pernikahan Miinatul Mauliyati Zahroh & Lukman Hakim di Kediaman Mempelai Wanita"
     );
-    const location = encodeURIComponent("Rumah Makan Dapur Kawalli");
-    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&details=${details}&location=${location}&dates=20260906T010000Z/20260906T060000Z`;
+    const location = encodeURIComponent("Kediaman Mempelai Wanita");
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&details=${details}&location=${location}&dates=20260906T090000Z/20260906T140000Z`;
   }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
-    setTimeout(() => setToast(null), 2200);
+    setTimeout(() => setToast(null), 2500);
   };
 
   const toggleMusic = () => {
@@ -153,11 +186,14 @@ function WeddingInvitation() {
       showToast("Minimal 2 karakter");
       return;
     }
-    const next = [{ name, message, at: Date.now() }, ...wishes].slice(0, 50);
+    const next: Wish[] = [
+      { name, attendance, message, at: Date.now() },
+      ...wishes,
+    ].slice(0, 50);
     setWishes(next);
     localStorage.setItem(WISHES_KEY, JSON.stringify(next));
     setWishMessage("");
-    showToast("Terima kasih atas doa & ucapannya");
+    showToast("Terima kasih atas konfirmasi kehadiran & doanya");
   };
 
   const galleryImages = [
@@ -470,77 +506,97 @@ function WeddingInvitation() {
           </div>
         </section>
 
-        {/* WISHES */}
-        <section className={`${styles.section} ${styles.wishes} ${styles.center}`}>
-          <span className={styles.eyebrow}>Doa &amp; Ucapan</span>
-          <div className={styles.divider} />
-          <p className={styles.wishCount}>
-            {wishes.length} Ucapan
-          </p>
-          <form className={styles.wishForm} onSubmit={submitWish}>
-            <input
-              className={styles.wishInput}
-              value={wishName}
-              onChange={(e) => setWishName(e.target.value)}
-              placeholder="Nama"
-              required
-              minLength={2}
-            />
-            <textarea
-              className={styles.wishTextarea}
-              value={wishMessage}
-              onChange={(e) => setWishMessage(e.target.value)}
-              placeholder="Doa & ucapan"
-              required
-              minLength={2}
-            />
-            <p className={styles.wishHint}>
-              *Mohon maaf! Khusus untuk tamu undangan
-              <br />
-              *Minimal 2 karakter.
-            </p>
-            <button type="submit" className={styles.btn}>
-              Kirim Ucapan
-            </button>
-          </form>
-          {wishes.length > 0 && (
-            <div className={styles.wishList}>
-              {wishes.map((w, idx) => (
-                <div key={idx} className={styles.wishItem}>
-                  <div className={styles.wishAuthor}>{w.name}</div>
-                  <div className={styles.wishMessage}>{w.message}</div>
-                </div>
-              ))}
+        {/* DOA & UCAPAN SECTION (MATCHING SCREENSHOT) */}
+        <section className={styles.wishesSection}>
+          <div className={styles.wishesHeaderWrapper}>
+            <h2 className={styles.wishesTitleMain}>Doa &amp; Ucapan</h2>
+            <div className={styles.wishesTitleReflection} aria-hidden="true">
+              Doa &amp; Ucapan
             </div>
-          )}
-        </section>
+          </div>
 
-        {/* RSVP */}
-        <section className={`${styles.section} ${styles.rsvp} ${styles.center}`}>
-          <span className={styles.eyebrow}>Konfirmasi Kehadiran</span>
-          <div className={styles.divider} />
-          <p className={styles.bodyText}>Silahkan pilih konfirmasi kehadiran</p>
-          <div className={styles.rsvpChoice}>
-            <button
-              type="button"
-              className={`${styles.rsvpBtn} ${rsvpStatus === "yes" ? styles.active : ""}`}
-              onClick={() => {
-                setRsvpStatus("yes");
-                showToast("Terima kasih, konfirmasi: Hadir");
-              }}
-            >
-              Hadir
-            </button>
-            <button
-              type="button"
-              className={`${styles.rsvpBtn} ${rsvpStatus === "no" ? styles.active : ""}`}
-              onClick={() => {
-                setRsvpStatus("no");
-                showToast("Terima kasih, konfirmasi: Tidak Hadir");
-              }}
-            >
-              Tidak Hadir
-            </button>
+          <div className={styles.wishesCard}>
+            <div className={styles.wishesCardHeader}>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 3.5a1.5 1.5 0 0 0-2.12-.12l-7.38 6.46-3.88-2.58a1.5 1.5 0 0 0-1.8.12l-3 2.5a1.5 1.5 0 0 0-.25 2.02l4.88 6.5A1.5 1.5 0 0 0 8.64 19h8.86a1.5 1.5 0 0 0 1.5-1.5v-13a1.5 1.5 0 0 0-.5-1z" />
+              </svg>
+              <span>{wishes.length} Ucapan</span>
+            </div>
+
+            <form className={styles.wishesForm} onSubmit={submitWish}>
+              <input
+                className={styles.wishesInput}
+                value={wishName}
+                onChange={(e) => setWishName(e.target.value)}
+                placeholder="Nama Anda"
+                required
+                minLength={2}
+              />
+
+              <textarea
+                className={styles.wishesTextarea}
+                value={wishMessage}
+                onChange={(e) => setWishMessage(e.target.value)}
+                placeholder="Berikan Ucapan &amp; Doa untuk Kedua Mempelai"
+                required
+                minLength={2}
+              />
+
+              <select
+                className={styles.wishesSelect}
+                value={attendance}
+                onChange={(e) => setAttendance(e.target.value as "yes" | "no")}
+                required
+              >
+                <option value="" disabled>
+                  Konfirmasi Kehadiran
+                </option>
+                <option value="yes">Hadir</option>
+                <option value="no">Tidak Hadir</option>
+              </select>
+
+              <button type="submit" className={styles.wishesSubmitBtn}>
+                Kirim
+              </button>
+            </form>
+
+            {wishes.length > 0 && (
+              <>
+                <div className={styles.wishesDivider} />
+                <div className={styles.wishesList}>
+                  {wishes.map((w, idx) => (
+                    <div key={idx} className={styles.wishesItem}>
+                      <div className={styles.wishesItemHeader}>
+                        <span className={styles.wishesAuthorName}>{w.name}</span>
+                        {w.attendance && (
+                          <span className={styles.wishesBadge}>
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                            </svg>
+                            {w.attendance === "yes" ? "Hadir" : "Tidak Hadir"}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.wishesItemTime}>
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        <span>{formatRelativeTime(w.at)}</span>
+                      </div>
+                      <div className={styles.wishesItemMessage}>{w.message}</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </section>
 
