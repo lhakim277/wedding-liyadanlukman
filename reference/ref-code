@@ -1,0 +1,440 @@
+"use client";
+
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import {
+    FormEvent,
+    Suspense,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+import styles from "./wedding.module.css";
+
+const MAPS_URL = "https://maps.app.goo.gl/srjDJdPtuWnAgVXm8";
+const WEDDING_TARGET = new Date("2026-09-06T08:00:00+07:00").getTime();
+const BANK_ACC = "7645012976";
+const GIFT_ADDRESS =
+    "Jl. M. Siban Bojong Poncol No.172, RT.002/RW.008, Kunciran Indah, Kec. Pinang, Kota Tangerang, Banten 15144";
+const WISHES_KEY = "liya-lukman-wishes";
+
+type Wish = { name: string; message: string; at: number };
+
+function pad(n: number) {
+    return String(n).padStart(2, "0");
+}
+
+function useGuestName() {
+    const searchParams = useSearchParams();
+    const raw = searchParams.get("to");
+    if (!raw) return "Tamu Undangan";
+    return decodeURIComponent(raw).replace(/\+/g, " ");
+}
+
+function WeddingInvitation() {
+    const guestName = useGuestName();
+    const [opened, setOpened] = useState(false);
+    const [copiedId, setCopiedId] = useState < string | null > (null);
+    const [rsvpStatus, setRsvpStatus] = useState < "yes" | "no" | null > (null);
+    const [cd, setCd] = useState({ d: "00", h: "00", m: "00", s: "00" });
+    const [wishName, setWishName] = useState("");
+    const [wishMessage, setWishMessage] = useState("");
+    const [wishes, setWishes] = useState < Wish[] > ([]);
+    const [toast, setToast] = useState < string | null > (null);
+
+    useEffect(() => {
+        document.body.classList.add("invite-locked");
+        try {
+            const raw = localStorage.getItem(WISHES_KEY);
+            if (raw) setWishes(JSON.parse(raw) as Wish[]);
+        } catch {
+            /* ignore */
+        }
+        return () => {
+            document.body.classList.remove("invite-locked");
+            document.body.style.overflow = "";
+        };
+    }, []);
+
+    useEffect(() => {
+        setWishName(guestName === "Tamu Undangan" ? "" : guestName);
+    }, [guestName]);
+
+    useEffect(() => {
+        const tick = () => {
+            let diff = WEDDING_TARGET - Date.now();
+            if (diff < 0) diff = 0;
+            setCd({
+                d: pad(Math.floor(diff / (1000 * 60 * 60 * 24))),
+                h: pad(Math.floor((diff / (1000 * 60 * 60)) % 24)),
+                m: pad(Math.floor((diff / (1000 * 60)) % 60)),
+                s: pad(Math.floor((diff / 1000) % 60)),
+            });
+        };
+        tick();
+        const id = setInterval(tick, 1000);
+        return () => clearInterval(id);
+    }, []);
+
+    const calendarHref = useMemo(() => {
+        const text = encodeURIComponent("Invitation wedding liya dan lukman");
+        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=20260906T010000Z/20260906T060000Z`;
+    }, []);
+
+    const showToast = (msg: string) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 2200);
+    };
+
+    const openInvite = () => {
+        setOpened(true);
+        document.body.classList.remove("invite-locked");
+        document.body.style.overflow = "auto";
+    };
+
+    const copyText = (id: string, value: string) => {
+        navigator.clipboard.writeText(value).then(() => {
+            setCopiedId(id);
+            showToast("Tersalin");
+            setTimeout(() => setCopiedId(null), 1800);
+        });
+    };
+
+    const submitWish = (e: FormEvent) => {
+        e.preventDefault();
+        const name = wishName.trim();
+        const message = wishMessage.trim();
+        if (name.length < 2 || message.length < 2) {
+            showToast("Minimal 2 karakter");
+            return;
+        }
+        const next = [{ name, message, at: Date.now() }, ...wishes].slice(0, 50);
+        setWishes(next);
+        localStorage.setItem(WISHES_KEY, JSON.stringify(next));
+        setWishMessage("");
+        showToast("Terima kasih atas doa & ucapannya");
+    };
+
+    return (
+        <div className={styles.app}>
+            <div className={`${styles.cover}${opened ? ` ${styles.opened}` : ""}`}>
+                <div className={styles.coverEyebrow}>The Wedding of</div>
+                <div className={styles.coverNames}>Liya &amp; Lukman</div>
+                <div className={styles.coverDate}>6 September 2026</div>
+                <div className={styles.guestBox}>
+                    <div className={styles.label}>Kpd Bpk/Ibu/Saudara/i</div>
+                    <div className={styles.name}>{guestName}</div>
+                </div>
+                <button type="button" className={styles.btn} onClick={openInvite}>
+                    Buka Undangan
+                </button>
+            </div>
+
+            <main>
+                <section className={`${styles.section} ${styles.opening} ${styles.center}`}>
+                    <div className={styles.openingTitle}>Our Wedding Invitation</div>
+                    <div className={styles.openingNames}>Liya &amp; Lukman</div>
+                    <p className={styles.openingQuote}>
+                        &ldquo;What counts in making a happy marriage is not so much how
+                        compatible you are, but how you deal with incompatibility. A great
+                        marriage is not when the perfect couple comes together. It is when an
+                        imperfect couple learns to enjoy their differences.&rdquo;
+                    </p>
+                    <div className={styles.eyebrow}>Kepada Yth. Bapak / Ibu / Saudara/i</div>
+                    <div className={styles.fullName} style={{ marginTop: 10 }}>
+                        {guestName}
+                    </div>
+                </section>
+
+                <section className={`${styles.section} ${styles.couple}`}>
+                    <div className={styles.kicker}>
+                        <span className={styles.eyebrow}>Bride &amp; Groom</span>
+                        <h2 className={styles.serif} style={{ fontSize: "1.6rem" }}>
+                            The Wedding of
+                        </h2>
+                        <div className={styles.serif} style={{ fontSize: "1.8rem", marginTop: 6 }}>
+                            Liya &amp; Lukman
+                        </div>
+                        <div className={styles.coverDate} style={{ marginTop: 8 }}>
+                            Minggu, 6 September 2026
+                        </div>
+                    </div>
+                    <p className={styles.bodyText} style={{ marginBottom: 28 }}>
+                        Tanpa mengurangi rasa hormat, kami bermaksud mengundang
+                        Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami:
+                    </p>
+                    <div className={styles.pair}>
+                        <div className={styles.profile}>
+                            <div className={styles.portraitWrap}>
+                                <Image
+                                    src="/wedding/portrait-bride.jpg"
+                                    alt="Miinatul Mauliyati Zahroh"
+                                    width={200}
+                                    height={260}
+                                />
+                            </div>
+                            <div className={styles.nick}>liya</div>
+                            <div className={styles.fullName}>Miinatul Mauliyati Zahroh, S.K.M</div>
+                            <div className={styles.parents}>
+                                Putri dari
+                                <br />
+                                Bapak H. Mafadil &amp; Ibu Hj. Siti Nurfaidah
+                            </div>
+                        </div>
+
+                        <div className={styles.amp}>&amp;</div>
+
+                        <div className={styles.profile}>
+                            <div className={styles.portraitWrap}>
+                                <Image
+                                    src="/wedding/portrait-groom.jpg"
+                                    alt="Lukman Hakim"
+                                    width={200}
+                                    height={260}
+                                />
+                            </div>
+                            <div className={styles.nick}>Lukman</div>
+                            <div className={styles.fullName}>Lukman Hakim, S.Mat</div>
+                            <div className={styles.parents}>
+                                Putra dari
+                                <br />
+                                Bapak Hasyim &amp; Ibu Umaiyah
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className={`${styles.section} ${styles.countdown} ${styles.center}`}>
+                    <span className={styles.eyebrow}>Count The Date</span>
+                    <div className={styles.divider} />
+                    <div className={styles.cdGrid}>
+                        <div className={styles.cdItem}>
+                            <div className={styles.cdNum}>{cd.d}</div>
+                            <div className={styles.cdLbl}>Hari</div>
+                        </div>
+                        <div className={styles.cdItem}>
+                            <div className={styles.cdNum}>{cd.h}</div>
+                            <div className={styles.cdLbl}>Jam</div>
+                        </div>
+                        <div className={styles.cdItem}>
+                            <div className={styles.cdNum}>{cd.m}</div>
+                            <div className={styles.cdLbl}>Menit</div>
+                        </div>
+                        <div className={styles.cdItem}>
+                            <div className={styles.cdNum}>{cd.s}</div>
+                            <div className={styles.cdLbl}>Detik</div>
+                        </div>
+                    </div>
+                    <a
+                        className={`${styles.btn} ${styles.btnOutline}`}
+                        href={calendarHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Simpan di Kalender
+                    </a>
+                </section>
+
+                <section className={`${styles.section} ${styles.quote} ${styles.center}`}>
+                    <p className={styles.quoteText}>
+                        &ldquo;Dan di antara tanda-tanda kekuasaan-Nya diciptakan-Nya untukmu
+                        pasangan hidup dari jenismu sendiri supaya kamu dapat ketenangan hati
+                        dan dijadikannya kasih sayang di antara kamu. Sesungguhnya yang
+                        demikian menjadi tanda-tanda kebesaran-Nya bagi orang-orang yang
+                        berpikir.&rdquo;
+                    </p>
+                    <div className={styles.cite}>( QS. Ar - Rum 21 )</div>
+                </section>
+
+                <section className={`${styles.section} ${styles.events} ${styles.center}`}>
+                    <div className={styles.kicker}>
+                        <span className={styles.eyebrow}>Wedding Event</span>
+                    </div>
+
+                    <div className={styles.eventCard}>
+                        <div className={styles.tag}>Akad Nikah</div>
+                        <div className={styles.day}>Minggu, 6 September 2026</div>
+                        <div className={styles.time}>Pukul : 08.00-10.00</div>
+                        <div className={styles.venue}>
+                            <strong>Rumah Makan Dapur Kawalli</strong>
+                            Lokasi Acara
+                        </div>
+                        <a
+                            className={`${styles.btn} ${styles.btnOutline}`}
+                            href={MAPS_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Lihat Lokasi
+                        </a>
+                    </div>
+
+                    <div className={styles.eventCard}>
+                        <div className={styles.tag}>Resepsi</div>
+                        <div className={styles.day}>Minggu, 6 September 2026</div>
+                        <div className={styles.time}>Pukul : 11.00-13.00</div>
+                        <div className={styles.venue}>
+                            <strong>Rumah Makan Dapur Kawalli</strong>
+                            Lokasi Acara
+                        </div>
+                        <a
+                            className={`${styles.btn} ${styles.btnOutline}`}
+                            href={MAPS_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Lihat Lokasi
+                        </a>
+                    </div>
+                </section>
+
+                <section className={`${styles.section} ${styles.gallery}`}>
+                    <div className={styles.kicker}>
+                        <span className={styles.eyebrow}>Wedding Gallery</span>
+                    </div>
+                    <div className={styles.galGrid}>
+                        <Image
+                            className={styles.wide}
+                            src="/wedding/gal-e.jpg"
+                            alt="Liya & Lukman"
+                            width={480}
+                            height={280}
+                        />
+                        <Image src="/wedding/gal-a.jpg" alt="Liya & Lukman" width={237} height={220} />
+                        <Image src="/wedding/gal-b.jpg" alt="Liya & Lukman" width={237} height={220} />
+                        <Image src="/wedding/gal-c.jpg" alt="Liya & Lukman" width={237} height={220} />
+                        <Image src="/wedding/gal-d.jpg" alt="Liya & Lukman" width={237} height={220} />
+                        <Image
+                            className={styles.wide}
+                            src="/wedding/gal-f.jpg"
+                            alt="Liya & Lukman"
+                            width={480}
+                            height={280}
+                        />
+                    </div>
+                </section>
+
+                <section className={`${styles.section} ${styles.gift} ${styles.center}`}>
+                    <span className={styles.eyebrow}>Wedding Gift</span>
+                    <div className={styles.divider} />
+                    <p className={styles.bodyText} style={{ marginBottom: 24 }}>
+                        Doa Restu Anda merupakan karunia yang sangat berarti bagi kami. Namun
+                        jika memberi adalah ungkapan tanda kasih Anda, Anda dapat memberi gift
+                    </p>
+
+                    <div className={styles.bankCard}>
+                        <div className={styles.bankName}>Lukman Hakim</div>
+                        <div className={styles.acc}>{BANK_ACC}</div>
+                        <button
+                            type="button"
+                            className={`${styles.copyBtn}${copiedId === "bank" ? ` ${styles.copied}` : ""}`}
+                            onClick={() => copyText("bank", BANK_ACC)}
+                        >
+                            {copiedId === "bank" ? "Tersalin" : "Salin No Rekening"}
+                        </button>
+                    </div>
+
+                    <div className={styles.addressCard}>
+                        <div className={styles.addressTitle}>GIFT FISIK</div>
+                        <div className={styles.addressText}>Alamat : {GIFT_ADDRESS}</div>
+                        <button
+                            type="button"
+                            className={`${styles.copyBtn}${copiedId === "addr" ? ` ${styles.copied}` : ""}`}
+                            onClick={() => copyText("addr", GIFT_ADDRESS)}
+                        >
+                            {copiedId === "addr" ? "Tersalin" : "Salin Alamat"}
+                        </button>
+                    </div>
+                </section>
+
+                <section className={`${styles.section} ${styles.wishes} ${styles.center}`}>
+                    <span className={styles.eyebrow}>Doa &amp; Ucapan</span>
+                    <div className={styles.divider} />
+                    <p className={styles.wishEmpty} style={{ marginBottom: 16 }}>
+                        {wishes.length} Ucapan
+                    </p>
+                    <form className={styles.wishForm} onSubmit={submitWish}>
+                        <input
+                            value={wishName}
+                            onChange={(e) => setWishName(e.target.value)}
+                            placeholder="Nama"
+                            required
+                            minLength={2}
+                        />
+                        <textarea
+                            value={wishMessage}
+                            onChange={(e) => setWishMessage(e.target.value)}
+                            placeholder="Doa & ucapan"
+                            required
+                            minLength={2}
+                        />
+                        <p className={styles.hint}>
+                            *Mohon maaf! Khusus untuk tamu undangan
+                            <br />
+                            *Minimal 2 karakter.
+                        </p>
+                        <button type="submit" className={styles.btn}>
+                            Kirim Ucapan
+                        </button>
+                    </form>
+                    <div className={styles.wishList}>
+                        {wishes.length === 0 ? (
+                            <p className={styles.wishEmpty}>Belum ada ucapan.</p>
+                        ) : (
+                            wishes.map((w) => (
+                                <div key={w.at} className={styles.wishItem}>
+                                    <div className={styles.wishAuthor}>{w.name}</div>
+                                    <div className={styles.wishMessage}>{w.message}</div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
+
+                <section className={`${styles.section} ${styles.rsvp} ${styles.center}`}>
+                    <span className={styles.eyebrow}>Konfirmasi Kehadiran</span>
+                    <div className={styles.divider} />
+                    <p className={styles.bodyText}>Silahkan pilih konfirmasi kehadiran</p>
+                    <div className={styles.rsvpChoice}>
+                        <button
+                            type="button"
+                            className={rsvpStatus === "yes" ? styles.active : undefined}
+                            onClick={() => {
+                                setRsvpStatus("yes");
+                                showToast("Terima kasih, konfirmasi: Hadir");
+                            }}
+                        >
+                            Hadir
+                        </button>
+                        <button
+                            type="button"
+                            className={rsvpStatus === "no" ? styles.active : undefined}
+                            onClick={() => {
+                                setRsvpStatus("no");
+                                showToast("Terima kasih, konfirmasi: Tidak Hadir");
+                            }}
+                        >
+                            Tidak Hadir
+                        </button>
+                    </div>
+                </section>
+
+                <section className={`${styles.section} ${styles.closing}`}>
+                    <div className={styles.thanks}>Thank You</div>
+                    <div className={styles.names}>Liya &amp; Lukman</div>
+                    <div className={styles.credit}>6 September 2026</div>
+                </section>
+            </main>
+
+            {toast ? <div className={styles.toast}>{toast}</div> : null}
+        </div>
+    );
+}
+
+export default function Home() {
+    return (
+        <Suspense fallback={<div className={styles.app} />}>
+            <WeddingInvitation />
+        </Suspense>
+    );
+}

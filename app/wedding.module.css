@@ -1,0 +1,810 @@
+/* Liya & Lukman — Design matching reference layout & typography */
+
+.app {
+  --ink: #141414;
+  --ink-soft: #1d1d1d;
+  --ink-mid: #272727;
+  --cream: #f8f0e5;
+  --cream-soft: #fff7f7;
+  --sand: #dac0a3;
+  --sand-deep: #dfc19a;
+  --muted: #b8b0a4;
+  --line: rgba(218, 192, 163, 0.35);
+  --text: #f8f0e5;
+
+  color: var(--text);
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  min-height: 100vh;
+  background: var(--ink);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 400;
+}
+
+.serif {
+  font-family: var(--font-playfair), serif;
+  font-weight: 500;
+}
+
+.script {
+  font-family: var(--font-pinyon), cursive;
+  font-weight: 400;
+}
+
+.eyebrow {
+  font-family: var(--font-montserrat), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 11px;
+  color: var(--sand);
+  font-weight: 500;
+}
+
+.app a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- COVER ---------- */
+.cover {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  padding: 40px 28px 48px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20, 20, 20, 0.15) 0%,
+      rgba(20, 20, 20, 0.35) 40%,
+      rgba(20, 20, 20, 0.92) 100%
+    ),
+    url("/wedding/cover-ref.jpg") center 30% / cover no-repeat;
+  transition:
+    transform 1s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.8s ease;
+}
+
+.cover.opened {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.coverEyebrow {
+  font-family: var(--font-montserrat), sans-serif;
+  letter-spacing: 0.22em;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--cream);
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.coverNames {
+  font-family: var(--font-playfair), serif;
+  font-size: 2.6rem;
+  line-height: 1.15;
+  margin-bottom: 8px;
+  color: var(--cream);
+}
+
+.coverDate {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 0.95rem;
+  color: var(--sand);
+  margin-bottom: 28px;
+  letter-spacing: 0.04em;
+}
+
+.guestBox {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 14px 8px;
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.guestBox .label {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.guestBox .name {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.35rem;
+  margin-top: 6px;
+  text-transform: lowercase;
+  color: var(--cream);
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+  font-family: var(--font-montserrat), sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--sand);
+  border: none;
+  padding: 14px 36px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    letter-spacing 0.3s ease,
+    background 0.3s,
+    color 0.3s,
+    transform 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn:hover {
+  background: var(--cream);
+  transform: translateY(-2px);
+}
+
+.btnOutline {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid var(--line);
+  padding: 12px 28px;
+}
+
+.btnOutline:hover {
+  background: rgba(248, 240, 229, 0.08);
+  border-color: var(--sand);
+  color: var(--sand);
+}
+
+/* ---------- SECTIONS ---------- */
+.section {
+  position: relative;
+  padding: 72px 28px 64px;
+  border-bottom: 1px solid rgba(218, 192, 163, 0.15);
+}
+
+.center {
+  text-align: center;
+}
+
+.divider {
+  width: 48px;
+  height: 1px;
+  background: var(--sand);
+  margin: 18px auto 24px;
+}
+
+.kicker {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.kicker .eyebrow {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.bodyText {
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: var(--muted);
+  max-width: 380px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ---------- OPENING ---------- */
+.opening {
+  background:
+    linear-gradient(180deg, rgba(20, 20, 20, 0.78), rgba(20, 20, 20, 0.92)),
+    url("/wedding/bg-1.jpg") center / cover no-repeat;
+  padding-top: 80px;
+}
+
+.openingTitle {
+  font-family: var(--font-pinyon), cursive;
+  font-size: 2.4rem;
+  color: var(--sand);
+  margin-bottom: 6px;
+}
+
+.openingNames {
+  font-family: var(--font-playfair), serif;
+  font-size: 2rem;
+  margin-bottom: 22px;
+  color: var(--cream);
+}
+
+.openingQuote {
+  font-size: 0.88rem;
+  line-height: 1.85;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 360px;
+  margin: 0 auto 28px;
+}
+
+/* ---------- COUPLE ---------- */
+.couple {
+  background: var(--ink-soft);
+}
+
+.pair {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-top: 18px;
+}
+
+.profile {
+  text-align: center;
+}
+
+.portraitWrap {
+  width: 200px;
+  height: 260px;
+  margin: 0 auto 20px;
+  position: relative;
+  border: 1px solid var(--line);
+  padding: 8px;
+  border-radius: 120px 120px 8px 8px;
+  overflow: hidden;
+  background: var(--ink-mid);
+}
+
+.portraitWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 112px 112px 4px 4px;
+}
+
+.nick {
+  font-family: var(--font-pinyon), cursive;
+  font-size: 2.2rem;
+  color: var(--sand);
+  margin-bottom: 4px;
+}
+
+.fullName {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  color: var(--cream);
+}
+
+.parents {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.amp {
+  text-align: center;
+  font-family: var(--font-pinyon), cursive;
+  font-size: 2.4rem;
+  color: var(--sand);
+  margin: -10px 0;
+}
+
+/* ---------- QUOTE ---------- */
+.quote {
+  background: var(--ink);
+}
+
+.quoteText {
+  font-family: var(--font-playfair), serif;
+  font-size: 0.95rem;
+  line-height: 1.9;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.cite {
+  margin-top: 18px;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--sand);
+  text-transform: uppercase;
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+/* ---------- COUNTDOWN ---------- */
+.countdown {
+  background:
+    linear-gradient(180deg, rgba(20, 20, 20, 0.72), rgba(20, 20, 20, 0.9)),
+    url("/wedding/bg-2.jpg") center / cover no-repeat;
+}
+
+.cdDate {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.7rem;
+  margin-bottom: 6px;
+  color: var(--cream);
+}
+
+.cdGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 28px 0 24px;
+}
+
+.cdItem {
+  border: 1px solid var(--line);
+  padding: 14px 4px;
+  background: rgba(20, 20, 20, 0.55);
+  border-radius: 4px;
+}
+
+.cdNum {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.7rem;
+  color: var(--sand);
+}
+
+.cdLbl {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ---------- EVENTS ---------- */
+.events {
+  background: var(--ink-soft);
+}
+
+.eventCard {
+  border: 1px solid var(--line);
+  padding: 28px 22px;
+  text-align: center;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.eventCard:last-of-type {
+  margin-bottom: 0;
+}
+
+.tag {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sand);
+  margin-bottom: 12px;
+}
+
+.day {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.35rem;
+  margin-bottom: 4px;
+  color: var(--cream);
+}
+
+.time {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.1rem;
+  color: var(--cream);
+  margin: 6px 0 14px;
+}
+
+.venue {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.venue strong {
+  color: var(--cream);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-playfair), serif;
+  font-size: 1.1rem;
+}
+
+/* ---------- GALLERY ---------- */
+.gallery {
+  background: var(--ink);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.gallery .kicker {
+  padding: 0 28px;
+}
+
+.galGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 0 6px;
+  margin-top: 22px;
+}
+
+.galItem {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: 220px;
+}
+
+.galItem.wide {
+  grid-column: 1 / span 2;
+  height: 280px;
+}
+
+.galItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.galItem:hover img {
+  transform: scale(1.05);
+}
+
+/* ---------- LIGHTBOX ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.lightboxContent {
+  position: relative;
+  max-width: 460px;
+  width: 100%;
+  max-height: 80vh;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--sand);
+}
+
+.lightboxContent img {
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid var(--sand);
+  color: var(--cream);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* ---------- GIFT ---------- */
+.gift {
+  background: var(--ink-soft);
+}
+
+.bankCard,
+.addressCard {
+  border: 1px solid var(--line);
+  padding: 20px;
+  margin: 0 auto 14px;
+  max-width: 380px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.015);
+  border-radius: 4px;
+}
+
+.bankName,
+.addressTitle {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sand);
+  margin-bottom: 6px;
+}
+
+.acc {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.5rem;
+  color: var(--cream);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.addressText {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.copyBtn {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sand);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.copyBtn:hover {
+  background: var(--sand);
+  color: var(--ink);
+}
+
+.copyBtn.copied {
+  background: var(--sand);
+  color: var(--ink);
+}
+
+/* ---------- WISHES ---------- */
+.wishes {
+  background: var(--ink);
+}
+
+.wishCount {
+  font-size: 0.9rem;
+  color: var(--sand);
+  margin-bottom: 20px;
+}
+
+.wishForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 380px;
+  margin: 0 auto 28px;
+}
+
+.wishInput,
+.wishTextarea {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  color: var(--cream);
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 0.9rem;
+  padding: 12px 14px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.wishInput:focus,
+.wishTextarea:focus {
+  border-color: var(--sand);
+}
+
+.wishTextarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.wishHint {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: left;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.wishList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  margin: 0 auto;
+  max-height: 340px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.wishItem {
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.wishAuthor {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.05rem;
+  color: var(--sand);
+  margin-bottom: 4px;
+}
+
+.wishMessage {
+  font-size: 0.86rem;
+  color: var(--cream);
+  line-height: 1.6;
+}
+
+.wishTime {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ---------- RSVP ---------- */
+.rsvp {
+  background: var(--ink-soft);
+}
+
+.rsvpChoice {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.rsvpBtn {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 12px 24px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.rsvpBtn:hover {
+  border-color: var(--sand);
+}
+
+.rsvpBtn.active {
+  background: var(--sand);
+  color: var(--ink);
+  border-color: var(--sand);
+}
+
+/* ---------- CLOSING ---------- */
+.closing {
+  background:
+    linear-gradient(180deg, rgba(20, 20, 20, 0.5), rgba(20, 20, 20, 0.95)),
+    url("/wedding/closing.jpg") center / cover no-repeat;
+  padding: 90px 28px 70px;
+  text-align: center;
+}
+
+.thanks {
+  font-family: var(--font-pinyon), cursive;
+  font-size: 2.8rem;
+  color: var(--sand);
+  margin-bottom: 6px;
+}
+
+.closingNames {
+  font-family: var(--font-playfair), serif;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  color: var(--cream);
+}
+
+.credit {
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+
+/* ---------- MUSIC CONTROLLER ---------- */
+.musicBtn {
+  position: fixed;
+  bottom: 22px;
+  right: calc(50% - 220px);
+  z-index: 45;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--sand);
+  color: var(--sand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s ease;
+}
+
+@media (max-width: 500px) {
+  .musicBtn {
+    right: 18px;
+  }
+}
+
+.musicBtn:hover {
+  background: var(--sand);
+  color: var(--ink);
+  transform: scale(1.06);
+}
+
+.musicSpin {
+  animation: spin 6s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- TOAST ---------- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 120;
+  background: var(--ink-soft);
+  color: var(--cream);
+  border: 1px solid var(--sand);
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
