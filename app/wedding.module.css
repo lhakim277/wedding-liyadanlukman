@@ -124,10 +124,10 @@
 
 .guestBox .name {
   font-family: var(--font-playfair), serif;
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   margin-top: 6px;
-  text-transform: lowercase;
   color: var(--cream);
+  letter-spacing: 0.02em;
 }
 
 /* ---------- BUTTONS ---------- */

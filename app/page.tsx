@@ -28,11 +28,26 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
+function toProperCase(str: string) {
+  return str
+    .split(" ")
+    .map((word) => {
+      if (!word) return "";
+      if (word.includes(".")) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}
+
 function useGuestName() {
   const searchParams = useSearchParams();
   const raw = searchParams.get("to");
   if (!raw) return "Tamu Undangan";
-  return decodeURIComponent(raw).replace(/\+/g, " ");
+  const decoded = decodeURIComponent(raw).replace(/\+/g, " ").trim();
+  if (decoded === decoded.toLowerCase()) {
+    return toProperCase(decoded);
+  }
+  return decoded;
 }
 
 function WeddingInvitation() {
