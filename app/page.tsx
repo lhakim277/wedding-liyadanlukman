@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { supabase } from "@/src/lib/supabaseClient";
 import styles from "./wedding.module.css";
 
 const MAPS_URL = "https://maps.app.goo.gl/srjDJdPtuWnAgVXm8";
@@ -88,6 +89,7 @@ function WeddingInvitation() {
   const [cd, setCd] = useState({ d: "00", h: "00", m: "00", s: "00" });
   const [wishName, setWishName] = useState("");
   const [wishMessage, setWishMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -97,17 +99,71 @@ function WeddingInvitation() {
 
   useEffect(() => {
     document.body.classList.add("invite-locked");
-    try {
-      const raw = localStorage.getItem(WISHES_KEY);
-      if (raw) {
-        setWishes(JSON.parse(raw) as Wish[]);
+
+    const fetchWishes = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("wishes")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        if (data && Array.isArray(data)) {
+          const mapped: Wish[] = data.map((item: any) => ({
+            name: item.sender_name || item.name || "Tamu Undangan",
+            attendance: item.attendance || "yes",
+            message: item.message || "",
+            at: new Date(item.created_at).getTime() || Date.now(),
+          }));
+          setWishes(mapped);
+          localStorage.setItem(WISHES_KEY, JSON.stringify(mapped));
+        }
+      } catch (err) {
+        console.warn("Supabase fetch fallback to local:", err);
+        const raw = localStorage.getItem(WISHES_KEY);
+        if (raw) {
+          try {
+            setWishes(JSON.parse(raw) as Wish[]);
+          } catch {
+            /* ignore */
+          }
+        }
       }
-    } catch {
-      /* ignore */
-    }
+    };
+
+    fetchWishes();
+
+    const channel = supabase
+      .channel("wishes-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "wishes" },
+        (payload) => {
+          const item = payload.new as any;
+          if (item) {
+            const incoming: Wish = {
+              name: item.sender_name || item.name || "Tamu Undangan",
+              attendance: item.attendance || "yes",
+              message: item.message || "",
+              at: new Date(item.created_at).getTime() || Date.now(),
+            };
+            setWishes((prev) => [
+              incoming,
+              ...prev.filter(
+                (w) =>
+                  w.name !== incoming.name ||
+                  Math.abs(w.at - incoming.at) > 3000
+              ),
+            ]);
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       document.body.classList.remove("invite-locked");
       document.body.style.overflow = "";
+      supabase.removeChannel(channel);
     };
   }, []);
 
@@ -178,7 +234,7 @@ function WeddingInvitation() {
     });
   };
 
-  const submitWish = (e: FormEvent) => {
+  const submitWish = async (e: FormEvent) => {
     e.preventDefault();
     const name = wishName.trim();
     const message = wishMessage.trim();
@@ -186,14 +242,40 @@ function WeddingInvitation() {
       showToast("Minimal 2 karakter");
       return;
     }
-    const next: Wish[] = [
-      { name, attendance, message, at: Date.now() },
-      ...wishes,
-    ].slice(0, 50);
+    setIsSubmitting(true);
+    const newWish: Wish = {
+      name,
+      attendance,
+      message,
+      at: Date.now(),
+    };
+
+    const next: Wish[] = [newWish, ...wishes].slice(0, 50);
     setWishes(next);
     localStorage.setItem(WISHES_KEY, JSON.stringify(next));
-    setWishMessage("");
-    showToast("Terima kasih atas konfirmasi kehadiran & doanya");
+
+    try {
+      const { error } = await supabase.from("wishes").insert([
+        {
+          sender_name: name,
+          attendance: attendance,
+          message: message,
+          is_visible: true,
+        },
+      ]);
+      if (error) {
+        console.error("Supabase insert error:", error.message || error);
+        showToast("Tersimpan secara lokal (Periksa izin RLS Supabase)");
+      } else {
+        showToast("Terima kasih atas konfirmasi kehadiran & doanya");
+      }
+    } catch (err: any) {
+      console.error("Error submitting wish to Supabase:", err?.message || err);
+      showToast("Terima kasih atas doanya");
+    } finally {
+      setIsSubmitting(false);
+      setWishMessage("");
+    }
   };
 
   const galleryImages = [
@@ -555,8 +637,12 @@ function WeddingInvitation() {
                 <option value="no">Tidak Hadir</option>
               </select>
 
-              <button type="submit" className={styles.wishesSubmitBtn}>
-                Kirim
+              <button
+                type="submit"
+                className={styles.wishesSubmitBtn}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Mengirim..." : "Kirim"}
               </button>
             </form>
 
