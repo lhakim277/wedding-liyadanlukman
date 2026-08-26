@@ -17,6 +17,7 @@ const MAPS_URL = "https://maps.app.goo.gl/srjDJdPtuWnAgVXm8";
 const MAPS_URL_RESEPSI = "https://maps.app.goo.gl/dUms5Z9cxpoVXWvk7";
 const WEDDING_TARGET = new Date("2026-09-06T08:00:00+07:00").getTime();
 const BANK_ACC = "7645012976";
+const BANK_ACC2 = "708901009803531";
 const BANK_NAME_LUKMAN = "Lukman Hakim";
 const BANK_NAME_IBU = "Siti Nurfaidah";
 const GIFT_ADDRESS =
@@ -562,13 +563,13 @@ function WeddingInvitation() {
           </p>
 
           <div className={styles.bankCard}>
-            <div className={styles.bankName}>Bank BCA — {BANK_NAME_LUKMAN}</div>
-            <div className={styles.acc}>{BANK_ACC}</div>
+            <div className={styles.bankName}>Bank BRI — {BANK_NAME_IBU}</div>
+            <div className={styles.acc}>{BANK_ACC2}</div>
             <button
               type="button"
               className={`${styles.copyBtn}${copiedId === "bank" ? ` ${styles.copied}` : ""
                 }`}
-              onClick={() => copyText("bank", BANK_ACC, "No Rekening")}
+              onClick={() => copyText("bank", BANK_ACC2, "No Rekening")}
             >
               {copiedId === "bank" ? "Tersalin" : "Salin No Rekening"}
             </button>
